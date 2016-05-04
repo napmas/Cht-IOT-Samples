@@ -1,2 +1,4 @@
 nodejs/config.json
 nodejs/node_modules/
+.eslintrc.json
+.vscode/
