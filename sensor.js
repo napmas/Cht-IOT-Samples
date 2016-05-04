@@ -25,9 +25,7 @@ function Sensor ( sensor_data ) {
         var req = http.request(options, (res) => {
             var html_body = "";
             res.on("data", (chunk) => {
-                // console.log(`BODY: ${chunk}`);
                 html_body = html_body + chunk;
-                // chunks.push(chunk);
             });
             res.on("end", () => {
                 console.log( html_body );

@@ -21,9 +21,7 @@ function Device(id) {
         var req = http.request(options, (res) => {
             var html_body = "";
             res.on("data", (chunk) => {
-                // console.log(`BODY: ${chunk}`);
-                html_body = html_body + chunk;
-                // chunks.push(chunk);  
+                html_body = html_body + chunk; 
             });
             res.on("end", () => {
                 console.log( html_body );
@@ -163,19 +161,13 @@ function Device(id) {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                // console.log( JSON.parse(html_body));
-                
-                // return JSON.parse( html_body );
                 var result = [];
                 var arr = JSON.parse( html_body) ;
-                // console.log( arr );
                 for (var i in arr) {
-                    // console.log( arr[i]);
                     arr[i]['device_id'] = this.id;
                     result.push (new Sensor(arr[i]));
                 }
-             
-                // console.log( result[0]);
+            
                 callback(null, result);
             });
         });
