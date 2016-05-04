@@ -28,8 +28,8 @@ var Device = require("./device.js");
 /* 
  * test get device info 
  */ 
-var device = new Device( 27 );
-device.getInfo();
+// var device = new Device( 27 );
+// device.getInfo();
 
 /**
  *  test modify device 
@@ -104,6 +104,38 @@ device.getInfo();
 // var sensor = new Sensor({"id":"temperature", "device_id":27});
 // sensor.suicide();
 
-/* test sensor */
-// sensor.getAll( 27 );
+/* 
+ * test send raw data 
+ */
+var device = new Device( 27 );
+var sensor_id = "sensor01";
+device.getSensor(sensor_id, function(err, result) {
+    if ( err ) {
+        console.log(`Got error : ${err}`);
+        return;
+    }    
+    
+    if ( result.length > 0) {
+        var sensor = new Sensor(result[0]); // should be unique XD
+        // sensor.getInfo();
+        device.uploadRawData([ sensor.getNumericRawData() ], function (err){
+            if (err) {
+                console.log(`got error : ${err}`);
+                return;
+            } 
+            sensor.getLatestUploadRawData( function (err, data_string) {
+                if (err) {
+                    console.log (`Got err : ${err}`);
+                    return;
+                }
+                console.log(`Get lates upload raw data : ${data_string}.`);
+            });
+            
+        });
+    } else {
+        console.log("This device doesn't have sensor with id :{sensor_id}");
+    }
+});
+// var sensor = new Sensor({"id": "sensor01", "device_id":27});
+// sensor.getInfo();
 

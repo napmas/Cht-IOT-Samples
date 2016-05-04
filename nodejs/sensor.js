@@ -39,6 +39,44 @@ function Sensor ( sensor_data ) {
         req.end();  
     };
     
+    /*
+     * Fake data
+     */
+    this.getNumericRawData = function () {
+        return {
+            "id": this.id, 
+            "value": ["123.4", "56.80"]
+        }; 
+    };
+    
+    this.getLatestUploadRawData = function ( callback ) {
+        var options = {
+            hostname: config.hostname,
+            port: 80,
+            path: `/iot/v1/device/${this.device_id}/sensor/${this.id}/rawdata`,
+            method: "GET", 
+            headers: { "CK": config.key }
+        };
+        
+        var req = http.request(options, (res) => {
+            var html_body = "";
+            res.on("data", (chunk) => {
+                html_body = html_body + chunk;
+            });
+            res.on("end", () => {
+                // console.log( html_body );
+                callback(null, html_body );
+            });
+        });
+        
+        req.on("error", (e) => {
+            console.log(`problem with request: ${e.message}`);
+        });
+        
+        req.end();          
+    };
+        
+    
     this.modify = function (sensor_data) {
         if ( (this.id == undefined) || (this.device_id == undefined) ){
             console.log(" no sensor id or device id ");
@@ -98,7 +136,7 @@ function Sensor ( sensor_data ) {
             if (res.statusCode == 200)
                 console.log("success... and no further info = =a ");
             else
-                console.log("fail and no further info,  neighter!!!! ");
+                console.log("fail and no further info,  neither!!!! ");
 
             var html_body = "";
             res.on("data", (chunk) => {
