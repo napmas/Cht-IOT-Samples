@@ -1,0 +1,24 @@
+{
+  "name": "cht-iot-samples",
+  "version": "0.0.1",
+  "description": "Samples of cht-iot-platform",
+  "main": "main.js",
+  "dependencies": {
+    "eslint": "^2.8.0",
+    "eslint-plugin-react": "^5.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/napmas/Cht-IOT-Samples.git"
+  },
+  "author": "Yu-Wen Huang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/napmas/Cht-IOT-Samples/issues"
+  },
+  "homepage": "https://github.com/napmas/Cht-IOT-Samples#readme"
+}

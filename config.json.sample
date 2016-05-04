@@ -1,0 +1,18 @@
+/*
+ * rename this file to config.json
+ */
+{
+    "hostname" : "iot.cht.com.tw", 
+    "key": "7HFC2AUE3TBXSWK7", 
+    "devices": [
+        {
+            "id" : 27
+        }  
+    ],
+    "sesnsors":[
+        {
+            "id" : 63,
+            "name": "sensor 0"
+        }
+    ]
+}
