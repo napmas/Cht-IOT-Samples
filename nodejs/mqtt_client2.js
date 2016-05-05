@@ -15,9 +15,7 @@ var sensor_id = "sensor01";
  
 client.on("connect", function () {
     console.log("OMFG, connected, publish some data ");
-    // client.subscribe();
-    client.publish(`/v1/registry/${serial_id}`, "hello mqtt");
-    // client.end();
+    client.subscribe(`/v1/registry/${serial_id}`);
 });
  
 client.on("message", function (topic, message) {
