@@ -2,6 +2,7 @@
  * rename this file to config.json
  */
 {
-    "hostname" : "iot.cht.com.tw", 
+    "hostname" : "iot.cht.com.tw",
+    "mqtt_port" : 1883,     
     "key": "YOUR_API_KEY", 
 }
