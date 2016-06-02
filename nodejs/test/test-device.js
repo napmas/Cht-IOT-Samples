@@ -273,8 +273,8 @@ describe('Device', function() {
            var test_device = new Device( device.id );
            test_device.getLastUploadSnapShotBySensor( sensor_data.id, function(err, result){
                assert.equal(err, "200", "upload snap shot  doesn't return HTTP 200 with msg \n" + result);
-               console.log("result");
-               console.log( result );
+            //    console.log("result");
+            //    console.log( result );
                fs.open('test/data/download.jpg', "w", function(err, fd){
                    if (err) {
                        console.log("Error open file ");
@@ -285,7 +285,7 @@ describe('Device', function() {
                            }
                           
                            fs.close(fd, function(){
-                               console.log("File downloaded.");
+                            //    console.log("File downloaded.");
                            });
                            
                        });
