@@ -11,6 +11,7 @@ var opts = {
 var client  = mqtt.connect(`tcp://${config.hostname}:${config.mqtt_port}`, opts);
  
 var device_id = 27;
+
 var sensor_id = "sensor01";
  
 client.on("connect", function () {

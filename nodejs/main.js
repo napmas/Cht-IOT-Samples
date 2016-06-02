@@ -5,25 +5,31 @@ var Device = require("./device.js");
 /* 
  * test create a new device 
  */ 
-// var device_data = {
-//     "name": "Hygrometer",  
-//     "desc": "Your Hygrometer",  
-//     "type": "general",  
-//     "uri": "http://a.b.c.d/xxx",  
-//     "lat": 24.95,  
-//     "lon": 121.16,  
-//     "attributes": [
-//         {  
-//             "key": "label",  
-//             "value": "溫濕度計"  
-//         },
-//         {  
-//             "key": "region", 
-//             "value": "Taiwan"
-//         }  
-//     ]  
-// };
-// Device.add( device_data ) ;
+var device_data = {
+    // "name": "Hygrometer",  
+    "desc": "Your Hygrometer",  
+    "type": "general",  
+    "uri": "http://a.b.c.d/xxx",  
+    "lat": 24.95,  
+    "lon": 121.16,  
+    "attributes": [
+        {  
+            "key": "label",  
+            "value": "溫濕度計"  
+        },
+        {  
+            "key": "region", 
+            "value": "Taiwan"
+        }  
+    ]  
+};
+Device.add( device_data, function (err, json_str) {
+    console.log(json_str);
+    if (err) 
+        console.log(" got error ");
+    else 
+        console.log(" add success" + json_str);
+}) ;
 
 /* 
  * test get device info 
@@ -107,35 +113,35 @@ var Device = require("./device.js");
 /* 
  * test send raw data 
  */
-var device = new Device( 27 );
-var sensor_id = "sensor01";
-device.getSensor(sensor_id, function(err, result) {
-    if ( err ) {
-        console.log(`Got error : ${err}`);
-        return;
-    }    
+// var device = new Device( 27 );
+// var sensor_id = "sensor01";
+// device.getSensor(sensor_id, function(err, result) {
+//     if ( err ) {
+//         console.log(`Got error : ${err}`);
+//         return;
+//     }    
     
-    if ( result.length > 0) {
-        var sensor = new Sensor(result[0]); // should be unique XD
-        // sensor.getInfo();
-        device.uploadRawData([ sensor.getNumericRawData() ], function (err){
-            if (err) {
-                console.log(`got error : ${err}`);
-                return;
-            } 
-            sensor.getLatestUploadRawData( function (err, data_string) {
-                if (err) {
-                    console.log (`Got err : ${err}`);
-                    return;
-                }
-                console.log(`Get lates upload raw data : ${data_string}.`);
-            });
+//     if ( result.length > 0) {
+//         var sensor = new Sensor(result[0]); // should be unique XD
+//         // sensor.getInfo();
+//         device.uploadRawData([ sensor.getNumericRawData() ], function (err){
+//             if (err) {
+//                 console.log(`got error : ${err}`);
+//                 return;
+//             } 
+//             sensor.getLatestUploadRawData( function (err, data_string) {
+//                 if (err) {
+//                     console.log (`Got err : ${err}`);
+//                     return;
+//                 }
+//                 console.log(`Get lates upload raw data : ${data_string}.`);
+//             });
             
-        });
-    } else {
-        console.log("This device doesn't have sensor with id :{sensor_id}");
-    }
-});
+//         });
+//     } else {
+//         console.log("This device doesn't have sensor with id :{sensor_id}");
+//     }
+// });
 // var sensor = new Sensor({"id": "sensor01", "device_id":27});
 // sensor.getInfo();
 

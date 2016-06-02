@@ -1,4 +1,6 @@
+var fs = require("fs");
 var http = require("http");
+var needle = require ("needle");
 
 var config = require("./config.json");
 var Sensor = require("./sensor.js");
@@ -9,7 +11,7 @@ function Device(id) {
         console.log(`this is ${this.id}`);
     };
     
-    this.getInfo = function () {
+    this.getInfo = function (callback) {
         var options = {
             hostname: config.hostname,
             port: 80,
@@ -24,7 +26,7 @@ function Device(id) {
                 html_body = html_body + chunk; 
             });
             res.on("end", () => {
-                console.log( html_body );
+                callback(null, html_body);
             });
         });
         
@@ -35,7 +37,7 @@ function Device(id) {
         req.end();        
     };
     
-    this.modify = function (device_data ) {
+    this.modify = function (device_data, callback ) {
         if (this.id == undefined) {
             console.log(" no device id ");
             return;
@@ -52,18 +54,12 @@ function Device(id) {
         var req = http.request(options, (res) => {
             // console.log(`STATUS: ${res.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);       
-
-            if (res.statusCode == 200)
-                console.log("success... and no further info = =a ");
-            else
-                console.log("fail and no further info,  neither!!!! ");
-
             var html_body = "";
             res.on("data", (chunk) => {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                console.log(html_body);
+                callback(res.statusCode, html_body);
             });
         });
 
@@ -75,7 +71,7 @@ function Device(id) {
         req.end();    
     };
     
-    this.suicide = function () {
+    this.suicide = function (callback) {
         if (this.id == undefined) {
             console.log(" no device id ");
             return;
@@ -91,17 +87,12 @@ function Device(id) {
             // console.log(`STATUS: ${res.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);       
 
-            if (res.statusCode == 200)
-                console.log("success... and no further info = =a ");
-            else
-                console.log("fail and no further info,  neither!!!! ");
-
             var html_body = "";
             res.on("data", (chunk) => {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                console.log(html_body);
+                callback(res.statusCode, html_body);
             });
         });
 
@@ -111,7 +102,7 @@ function Device(id) {
         req.end();         
     };
     
-    this.addSensor = function ( sensor_data ) {
+    this.addSensor = function ( sensor_data, callback ) {
         var options = {
             hostname: config.hostname,
             port: 80,
@@ -124,17 +115,13 @@ function Device(id) {
         var req = http.request(options, (res) => {
             // console.log(`STATUS: ${res.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);       
-            if (res.statusCode == 200)
-                console.log("success... and no further info = =a ");
-            else
-                console.log("fail and no further info,  neither!!!! ");
 
             var html_body = "";
             res.on("data", (chunk) => {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                console.log(html_body);
+                callback(res.statusCode, html_body);
             });
         });
 
@@ -168,7 +155,7 @@ function Device(id) {
                     result.push (new Sensor(arr[i]));
                 }
             
-                callback(null, result);
+                callback(res.statusCode, result);
             });
         });
 
@@ -200,7 +187,6 @@ function Device(id) {
                     arr[i]["device_id"] = this.id;
                     if ( arr[i]["id"] == sensor_id ) {
                         result.push (new Sensor(arr[i]));
-                        // result.push( )
                     }
                 }
             
@@ -225,20 +211,13 @@ function Device(id) {
             headers: { "CK": config.key }
         };
         var req = http.request(options, (res) => {
-            if (res.statusCode == 200) {
-                console.log("success... and no further info = =a ");
-                callback( null );
-            } else {
-                console.log("fail and no further info,  neither!!!! ");
-                callback ( res.statusCode );
-            }
                             
             var html_body = "";
             res.on("data", (chunk) => {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                console.log ( html_body );
+                callback ( res.statusCode, html_body );
             });
         });
 
@@ -250,11 +229,48 @@ function Device(id) {
         req.write(post_data);
         req.end();          
     };
+    
+    this.uploadSnapShot = function ( data, callback ) {
+        var options = {
+            hostname: config.hostname,
+            port: 80,
+            path: `/iot/v1/device/${this.id}/snapshot`,
+            method: "POST",
+            headers: { "CK": config.key }, 
+            multipart : true
+        };
+        // console.log( options );        
+        needle.post( options.hostname + options.path, data, options, function (err, resp, html_body){
+            if (err) {
+                callback(500, err.code);
+            } else {
+                callback(resp.statusCode,  resp.statusMessage);
+            } 
+            
+        });              
+    };
+
+    
+    this.getLastUploadSnapShotBySensor = function ( sensor_id, callback ) {
+        var options = {
+            hostname: config.hostname,
+            port: 80,
+            path: `/iot/v1/device/${this.id}/sensor/${sensor_id}/snapshot`,
+            headers: { "CK": config.key }
+        };
+        needle.get( options.hostname + options.path, options, function (err, res) {
+            if (err) {
+                callback( 500, err.Code);
+            } else {
+                callback( res.statusCode, res.body );
+            }
+        } );        
+    };
 }
 
 module.exports = Device;
 
-module.exports.add = function ( device_data ) {
+module.exports.add = function ( device_data, callback ) {
     var options = {
         hostname: config.hostname,
         port: 80,
@@ -262,23 +278,21 @@ module.exports.add = function ( device_data ) {
         method: "POST", 
         headers: { "CK": config.key }
     };
-
     
     var req = http.request(options, (res) => {
         // console.log(`STATUS: ${res.statusCode}`);
         // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);       
-        
-        if ( res.statusCode == 200) 
-            console.log("success... and no further info = =a ");
-        else 
-            console.log("fail and no further info,  neighter!!!! ");
              
         var html_body = "";
         res.on("data", (chunk) => {
             html_body = html_body + chunk;
         });
         res.on("end", () => {
-            console.log( html_body );
+            if ( res.statusCode == 200) {
+                callback ( null, html_body );
+            } else {
+                callback( res.statusCode);
+            }            
         });
     });
     

@@ -1,5 +1,5 @@
 /*
- * subscriber
+ * subscribe 感測器資料變更
  */
 
 var mqtt = require("mqtt");

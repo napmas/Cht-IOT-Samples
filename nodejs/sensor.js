@@ -13,7 +13,7 @@ function Sensor ( sensor_data ) {
     
     this.device_id = sensor_data.device_id; 
     
-    this.getInfo = function () {
+    this.getInfo = function( callback ) {
         var options = {
             hostname: config.hostname,
             port: 80,
@@ -28,7 +28,7 @@ function Sensor ( sensor_data ) {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                console.log( html_body );
+                callback( res.statusCode, html_body);
             });
         });
         
@@ -64,8 +64,7 @@ function Sensor ( sensor_data ) {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                // console.log( html_body );
-                callback(null, html_body );
+                callback(res.statusCode, html_body );
             });
         });
         
@@ -75,11 +74,10 @@ function Sensor ( sensor_data ) {
         
         req.end();          
     };
-        
     
-    this.modify = function (sensor_data) {
+    this.modify = function(sensor_data, callback) {
         if ( (this.id == undefined) || (this.device_id == undefined) ){
-            console.log(" no sensor id or device id ");
+            callback("406", "no sensor id or device id");
             return;
         }
         var options = {
@@ -90,22 +88,16 @@ function Sensor ( sensor_data ) {
             headers: { "CK": config.key }
         };
 
-
         var req = http.request(options, (res) => {
             // console.log(`STATUS: ${res.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);       
-
-            if (res.statusCode == 200)
-                console.log("success... and no further info = =a ");
-            else
-                console.log("fail and no further info,  neither!!!! ");
 
             var html_body = "";
             res.on("data", (chunk) => {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                console.log(html_body);
+                callback(res.statusCode, html_body);
             });
         });
 
@@ -117,7 +109,7 @@ function Sensor ( sensor_data ) {
         req.end();         
     };
     
-    this.suicide = function () {
+    this.suicide = function ( callback ) {
         if (this.id == undefined) {
             console.log(" no sensor id ");
             return;
@@ -133,17 +125,13 @@ function Sensor ( sensor_data ) {
             // console.log(`STATUS: ${res.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);       
 
-            if (res.statusCode == 200)
-                console.log("success... and no further info = =a ");
-            else
-                console.log("fail and no further info,  neither!!!! ");
-
             var html_body = "";
             res.on("data", (chunk) => {
                 html_body = html_body + chunk;
             });
             res.on("end", () => {
-                console.log(html_body);
+                // console.log(html_body);
+                callback( res.statusCode, html_body );
             });
         });
 
